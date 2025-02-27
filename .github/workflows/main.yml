@@ -21,15 +21,15 @@ jobs:
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_KEYS }}
 
       - name: Deploy to VM
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@3.86.177.103 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@43.206.235.118 << 'EOF'
           set -e  # Exit on any command failure
 
           # Ensure the directory is correct
-          cd /home/ubuntu/git_test || exit 1
+          cd /home/ubuntu/python-pipline || exit 1
 
           # Ensure Python 3 is installed
           sudo apt update && sudo apt install -y python3 python3-venv python3-pip
