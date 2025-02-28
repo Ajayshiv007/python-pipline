@@ -28,6 +28,19 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@44.211.45.25 << 'EOF'
           set -e  # Exit on any command failure
 
+          # Clone or update the repository
+          if [ -d "/home/ubuntu/democicd" ]; then
+            echo "Repository exists. Pulling latest changes..."
+            cd /home/ubuntu/democicd
+            git reset --hard  # Prevent merge conflicts
+            git pull origin main
+          else
+            echo "Cloning repository..."
+            cd /home/ubuntu
+            git clone https://github.com/Mayank0851/democicd
+            cd democicd
+          fi
+
           # Ensure the directory is correct
           cd /home/ubuntu/python-pipline || exit 1
 
