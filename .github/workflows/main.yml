@@ -29,16 +29,16 @@ jobs:
           set -e  # Exit on any command failure
 
           # Clone or update the repository
-          if [ -d "/home/ubuntu/democicd" ]; then
+          if [ -d "/home/ubuntu/python-pipline" ]; then
             echo "Repository exists. Pulling latest changes..."
-            cd /home/ubuntu/democicd
+            cd /home/ubuntu/python-pipline
             git reset --hard  # Prevent merge conflicts
             git pull origin main
           else
             echo "Cloning repository..."
             cd /home/ubuntu
-            git clone https://github.com/Mayank0851/democicd
-            cd democicd
+            git clone https://github.com/Ajayshiv007/python-pipline
+            cd python-pipline
           fi
 
           # Ensure the directory is correct
