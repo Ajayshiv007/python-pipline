@@ -4,7 +4,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World" + "My Ajay pipline is working"}
+    return {"Hello": "World" + "My pipeline is working"}
 
 
 @app.get("/print/{this}")
