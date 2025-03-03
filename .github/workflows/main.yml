@@ -40,28 +40,15 @@ jobs:
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_KEYS }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to VM
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@3.91.156.233 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@3.86.177.103 << 'EOF'
           set -e  # Exit on any command failure
 
-          # Clone or update the repository
-          if [ -d "/home/ubuntu/python-pipline" ]; then
-            echo "Repository exists. Pulling latest changes..."
-            cd /home/ubuntu/python-pipline
-            git reset --hard  # Prevent merge conflicts
-            git pull origin main
-          else
-            echo "Cloning repository..."
-            cd /home/ubuntu
-            git clone https://github.com/Ajayshiv007/python-pipline
-            cd python-pipline
-          fi
-
           # Ensure the directory is correct
-          cd /home/ubuntu/python-pipline || exit 1
+          cd /home/ubuntu/git_test || exit 1
 
           # Ensure Python 3 is installed
           sudo apt update && sudo apt install -y python3 python3-venv python3-pip
@@ -91,4 +78,20 @@ jobs:
           # Start Uvicorn in the background, redirect logs, and detach process
           nohup env/bin/uvicorn main:app --host 0.0.0.0 --port 8080 > uvicorn.log 2>&1 & disown
 
+          sudo apt install prometheus -y
+          sudo systemctl enable prometheus
+
+          sudo tee -a /etc/prometheus/prometheus.yml << 'EOF'
+            - job_name: 'fastapi_app'
+              metrics_path: '/metrics'
+              static_configs:
+                - targets: ['localhost:8080']
+
+          sudo systemctl start prometheus 
+          sudo  apt install grafana -y
+          sudo systemctl enable grafana-server 
+          sudo systemctl start grafana-server 
+
+
+          
           EOF
