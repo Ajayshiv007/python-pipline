@@ -44,7 +44,7 @@ jobs:
 
       - name: Deploy to VM
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@3.86.177.103 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@54.242.106.214 << 'EOF'
           set -e  # Exit on any command failure
 
           # Ensure the directory is correct
