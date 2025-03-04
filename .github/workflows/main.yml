@@ -35,7 +35,11 @@ jobs:
           fi
 
           # Ensure the latest image is pulled
+<<<<<<< HEAD
           docker pull ajayshiv/fastapi
+=======
+          docker pull your-dockerhub-username/fastapi-app:latest
+>>>>>>> 234422843430000a42c2568480498c7d51ff688c
 
           # Stop and remove old container if running
           docker stop fastapi-container || true
@@ -43,6 +47,10 @@ jobs:
 
           # Run the new container
           docker run -d --name fastapi-container -p 8080:8000 \
+<<<<<<< HEAD
             ajayshiv/fastapi
+=======
+            your-dockerhub-username/fastapi-app:latest
+>>>>>>> 234422843430000a42c2568480498c7d51ff688c
 
           EOF
