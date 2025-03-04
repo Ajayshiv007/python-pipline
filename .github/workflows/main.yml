@@ -108,4 +108,3 @@ jobs:
           }' http://admin:admin@54.160.177.14:3000/api/datasources
 
           echo "Deployment and monitoring setup complete!"
-          EOF
