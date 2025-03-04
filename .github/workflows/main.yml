@@ -1,4 +1,4 @@
-name: Pipeline Deploy
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,7 +6,27 @@ on:
       - main
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Run Tests
+        run: pytest .
+
   deploy:
+    needs: test  # Ensure tests pass before deploying
     runs-on: ubuntu-latest
     steps:
       - name: Setup SSH Agent
@@ -16,7 +36,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@54.242.106.214 << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@54.160.177.14 << 'EOF'
           set -e  # Exit on any command failure
 
           echo "Checking if Docker is installed..."
@@ -35,11 +55,7 @@ jobs:
           fi
 
           # Ensure the latest image is pulled
-<<<<<<< HEAD
-          docker pull ajayshiv/fastapi
-=======
           docker pull your-dockerhub-username/fastapi-app:latest
->>>>>>> 234422843430000a42c2568480498c7d51ff688c
 
           # Stop and remove old container if running
           docker stop fastapi-container || true
@@ -47,10 +63,6 @@ jobs:
 
           # Run the new container
           docker run -d --name fastapi-container -p 8080:8000 \
-<<<<<<< HEAD
-            ajayshiv/fastapi
-=======
             your-dockerhub-username/fastapi-app:latest
->>>>>>> 234422843430000a42c2568480498c7d51ff688c
 
           EOF
