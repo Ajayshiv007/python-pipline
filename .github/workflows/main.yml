@@ -54,14 +54,14 @@ jobs:
             echo "Docker is already installed."
           fi
 
-          # Ensure the user has permission to run Docker commands
-          echo "Ensuring user has Docker permissions..."
-          sudo usermod -aG docker \$USER || true
-          newgrp docker || true
+           # Ensure the 'ubuntu' user has permission to run Docker
+          echo "Ensuring 'ubuntu' user has Docker permissions..."
+          sudo usermod -aG docker ubuntu
+          echo "Docker permissions updated."
 
-          # Restart the SSH session to apply Docker group changes (optional)
-          echo "Restarting SSH session for changes to take effect..."
-          exec sudo su -l \$USER
+          # Restart SSH session for changes to take effect
+          echo "Applying Docker group changes..."
+          exec sudo su -l ubuntu
 
           # Ensure the latest image is pulled
           docker pull your-dockerhub-username/fastapi-app:latest
