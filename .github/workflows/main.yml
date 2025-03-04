@@ -63,6 +63,12 @@ jobs:
 
           # Run the new container
           docker run -d --name fastapi-container -p 8080:8000 \
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            ajayshiv/fastapi 
+=======
+>>>>>>> 8579f9dcf2ea443d00c4a3802c81a5921253b59f
             your-dockerhub-username/fastapi-app:latest
 
           EOF
