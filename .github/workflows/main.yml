@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest httpx
+          pip install pytest httpx prometheus-fastapi-instrumentator
 
       - name: Run Tests
         run: pytest .
@@ -54,7 +54,7 @@ jobs:
             echo "Docker is already installed."
           fi
 
-           # Ensure the 'ubuntu' user has permission to run Docker
+          # Ensure the 'ubuntu' user has permission to run Docker
           echo "Ensuring 'ubuntu' user has Docker permissions..."
           sudo usermod -aG docker ubuntu
           echo "Docker permissions updated."
@@ -70,7 +70,42 @@ jobs:
           docker stop fastapi-container || true
           docker rm fastapi-container || true
 
-          # Run the new container
-          docker run -d --name fastapi-container -p 8080:8000 \ajayshiv/fastapi
+          # Run the new container with Prometheus metrics exposed
+          docker run -d --name fastapi-container -p 8080:8000 ajayshiv/fastapi
 
+          # Create Prometheus configuration file
+          echo "Creating Prometheus configuration..."
+          cat <<EOL > prometheus.yml
+          global:
+            scrape_interval: 15s
+
+          scrape_configs:
+            - job_name: 'fastapi'
+              static_configs:
+                - targets: ['54.160.177.14:8080']
+          EOL
+
+          # Run Prometheus container
+          echo "Starting Prometheus..."
+          docker run -d --name prometheus -p 9090:9090 -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+
+          # Run Grafana container
+          echo "Starting Grafana..."
+          docker run -d --name grafana -p 3000:3000 grafana/grafana
+
+          # Wait for Grafana to start
+          echo "Waiting for Grafana to start..."
+          sleep 10
+
+          # Configure Grafana to use Prometheus as a data source
+          echo "Configuring Grafana..."
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "name": "Prometheus",
+            "type": "prometheus",
+            "url": "http://54.160.177.14:9090",
+            "access": "proxy",
+            "basicAuth": false
+          }' http://admin:admin@54.160.177.14:3000/api/datasources
+
+          echo "Deployment and monitoring setup complete!"
           EOF
