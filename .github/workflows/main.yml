@@ -64,13 +64,13 @@ jobs:
           exec sudo su -l ubuntu
 
           # Ensure the latest image is pulled
-          docker pull your-dockerhub-username/fastapi-app:latest
+          docker pull ajayshiv/fastapi
 
           # Stop and remove old container if running
           docker stop fastapi-container || true
           docker rm fastapi-container || true
 
           # Run the new container
-          docker run -d --name fastapi-container -p 8080:8000 \your-dockerhub-username/fastapi-app:latest
+          docker run -d --name fastapi-container -p 8080:8000 \ajayshiv/fastapi
 
           EOF
